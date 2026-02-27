@@ -58,7 +58,7 @@ function WardCard({ ward }) {
       </div>
 
       {/* Bed Map Toggle */}
-      <button onClick={() => setExpanded(e => !e)} style={{ width: '100%', padding: '10px 20px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: '#5A7EA8', fontWeight: 600, fontFamily: "'DM Sans', sans-serif' }}>
+      <button onClick={() => setExpanded(e => !e)} style={{ width: '100%', padding: '10px 20px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: '#5A7EA8', fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
         View bed map
         {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
       </button>

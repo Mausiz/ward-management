@@ -1,0 +1,10 @@
+{
+  "name": "ward-management-system",
+  "version": "1.0.0",
+  "scripts": {
+    "install-server": "cd server && npm install",
+    "install-client": "cd client && npm install",
+    "build": "cd client && npm install && npm run build",
+    "start": "cd server && npm start"
+  }
+}

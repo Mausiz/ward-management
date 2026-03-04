@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Edit2, Trash2, ChevronDown } from 'lucide-react';
+import { Search, Edit2, Trash2, Activity } from 'lucide-react';
 import Badge from '../shared/Badge';
 
 const TH = ({ children, style }) => (
@@ -22,6 +22,19 @@ export default function PatientList({ patients, wards, onEdit, onDischarge }) {
   });
 
   const selectStyle = { padding: '8px 12px', border: '1px solid #D5E3EF', borderRadius: 8, fontSize: 13, color: '#1A3A55', fontFamily: "'DM Sans', sans-serif", background: '#fff', cursor: 'pointer', outline: 'none' };
+
+  const formatLastUpdate = (timestamp) => {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    if (diffMins < 1) return 'just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return date.toLocaleDateString();
+  };
 
   return (
     <div>
@@ -59,6 +72,7 @@ export default function PatientList({ patients, wards, onEdit, onDischarge }) {
                 <TH>Patient</TH>
                 <TH>Ward / Bed</TH>
                 <TH>Condition</TH>
+                <TH>Vitals</TH>
                 <TH>Doctor</TH>
                 <TH>Admitted</TH>
                 <TH>Status</TH>
@@ -67,7 +81,7 @@ export default function PatientList({ patients, wards, onEdit, onDischarge }) {
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={7} style={{ padding: '40px', textAlign: 'center', color: '#8BA3BC', fontFamily: "'DM Sans', sans-serif", fontSize: 14 }}>No patients found</td></tr>
+                <tr><td colSpan={8} style={{ padding: '40px', textAlign: 'center', color: '#8BA3BC', fontFamily: "'DM Sans', sans-serif", fontSize: 14 }}>No patients found</td></tr>
               ) : filtered.map((p, i) => (
                 <tr key={p.id} style={{ borderBottom: '1px solid #F0F6FB', transition: 'background 0.15s' }}
                   onMouseEnter={e => e.currentTarget.style.background = '#F7FAFE'}
@@ -88,6 +102,31 @@ export default function PatientList({ patients, wards, onEdit, onDischarge }) {
                     <span style={{ color: '#8BA3BC' }}> · {p.bed}</span>
                   </td>
                   <td style={{ padding: '14px 16px', fontSize: 13, color: '#1A3A55', fontFamily: "'DM Sans', sans-serif", maxWidth: 160 }}>{p.condition}</td>
+                  <td style={{ padding: '14px 16px' }}>
+                    {p.temperature || p.heartRate ? (
+                      <div>
+                        <div style={{ fontSize: 12, fontFamily: "'DM Sans', sans-serif", display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                          {p.temperature && (
+                            <span style={{ color: p.temperature > 37.5 ? '#E8465A' : '#4A6A8A' }}>
+                              🌡️ {p.temperature.toFixed(1)}°C
+                            </span>
+                          )}
+                          {p.heartRate && (
+                            <span style={{ color: p.heartRate > 100 || p.heartRate < 60 ? '#F59E0B' : '#4A6A8A' }}>
+                              ❤️ {p.heartRate} BPM
+                            </span>
+                          )}
+                        </div>
+                        {p.lastVitalsUpdate && (
+                          <div style={{ fontSize: 10, color: '#A0B4C8', display: 'flex', alignItems: 'center', gap: 3 }}>
+                            <Activity size={10} /> {formatLastUpdate(p.lastVitalsUpdate)}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <span style={{ fontSize: 12, color: '#C0D4E8', fontFamily: "'DM Sans', sans-serif" }}>No data</span>
+                    )}
+                  </td>
                   <td style={{ padding: '14px 16px', fontSize: 13, color: '#4A6A8A', fontFamily: "'DM Sans', sans-serif" }}>{p.doctor}</td>
                   <td style={{ padding: '14px 16px', fontSize: 12, color: '#8BA3BC', fontFamily: "'DM Sans', sans-serif" }}>{p.admittedDate}</td>
                   <td style={{ padding: '14px 16px' }}><Badge status={p.status} /></td>

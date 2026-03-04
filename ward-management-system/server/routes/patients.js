@@ -34,6 +34,9 @@ router.post('/', (req, res) => {
   const newPatient = {
     id: uuidv4(),
     admittedDate: new Date().toISOString().split('T')[0],
+    temperature: null,
+    heartRate: null,
+    lastVitalsUpdate: null,
     ...req.body,
   };
   mockData.patients.push(newPatient);
@@ -54,6 +57,28 @@ router.put('/:id', (req, res) => {
   if (idx === -1) return res.status(404).json({ error: 'Patient not found' });
   mockData.patients[idx] = { ...mockData.patients[idx], ...req.body };
   res.json(mockData.patients[idx]);
+});
+
+// POST update patient vitals (from ESP32)
+router.post('/:id/vitals', (req, res) => {
+  const idx = mockData.patients.findIndex(p => p.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Patient not found' });
+  
+  const { temperature, heartRate } = req.body;
+  
+  mockData.patients[idx].temperature = temperature;
+  mockData.patients[idx].heartRate = heartRate;
+  mockData.patients[idx].lastVitalsUpdate = new Date().toISOString();
+  
+  console.log(`Vitals updated for ${mockData.patients[idx].name}: Temp=${temperature}°C, HR=${heartRate}BPM`);
+  
+  res.json({
+    success: true,
+    patient: mockData.patients[idx].name,
+    temperature,
+    heartRate,
+    timestamp: mockData.patients[idx].lastVitalsUpdate
+  });
 });
 
 // DELETE (discharge) patient

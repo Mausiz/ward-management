@@ -76,7 +76,7 @@ Render will:
 - Build the React app (creates `client/dist/`)
 - Start the Express server (which serves both API and built React files)
 
-Your app will be live at: `https://your-app-name.onrender.com`
+App will be live at: `https://ward-management....onrender.com`
 
 ---
 
